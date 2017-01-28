@@ -4,8 +4,9 @@
     "type": "project",
     "require": {
         "guzzlehttp/guzzle": "^6.2",
-        "curl/curl": "^1.6",
-        "mongodb/mongodb": "^1.1"
+        "mongodb/mongodb": "^1.1",
+        "slim/slim": "^3.7",
+        "php-di/slim-bridge": "^1.0"
     },
     "license": "MIT",
     "authors": [
