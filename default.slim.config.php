@@ -1,8 +1,5 @@
 <?php
 
-require_once 'bootstrap.php';
-
-use Slim\App;
 use DI\Bridge\Slim\CallableResolver;
 use DI\Bridge\Slim\ControllerInvoker;
 use DI\Container;
@@ -16,13 +13,7 @@ use Slim\Http\Headers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-// To help the built-in PHP dev server, check if the request was actually for
-// something which should probably be served as a static file
-if (PHP_SAPI === 'cli-server' && $_SERVER ['SCRIPT_FILENAME'] !== __FILE__) {
-    return false;
-}
-
-$slimDefinitions = [
+return [
     // Settings that can be customized by users
     'settings.httpVersion' => '1.1',
     'settings.responseChunkSize' => 4096,
@@ -78,39 +69,3 @@ $slimDefinitions = [
     // Aliases
     ContainerInterface::class => DI\get(Container::class),
 ];
-
-$dependencies = [
-    MongoDB\Client::class => DI\object(MongoDB\Client::class)->constructorParameter('uri', 'mongodb://localhost')
-];
-
-$containerBuilder = new \DI\ContainerBuilder ();
-$containerBuilder->addDefinitions(array_merge($slimDefinitions, $dependencies));
-$container = $containerBuilder->build();
-
-$app = new App($container);
-
-$app->get('/news/', function(\Psr\Http\Message\RequestInterface $request, Psr\Http\Message\ResponseInterface $response, MongoDB\Client $mongo) {
-    $page = $request->getQueryParam('page', 1);
-    $pageSize = $request->getQueryParam('pageSize', 10);
-    $skip = $pageSize * $page;
-    $desiredProperties = ['_id' => 0, 'title' => 1, 'news_id' => 1];
-
-    $response->getBody()->write(\GuzzleHttp\json_encode(iterator_to_array($mongo->newsdb->news->find([], ['skip' => $skip, 'limit' => $pageSize, 'projection' => $desiredProperties]))));
-
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-$app->get('/news/{id}', function(\Psr\Http\Message\RequestInterface $request,Psr\Http\Message\ResponseInterface $response, MongoDB\Client $mongo, $id) {
-    $desiredProperties = ['_id' => 0, 'title' => 1, 'news_id' => 1];
-    $result = $mongo->newsdb->news->findOne(['news_id' => $id],['projection'=>$desiredProperties]);
-    
-    if(!$result){
-        throw new Slim\Exception\NotFoundException($request,$response);
-    }
-
-    $response->getBody()->write(\GuzzleHttp\json_encode($result));
-
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-$app->run();
