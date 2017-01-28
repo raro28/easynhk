@@ -4,7 +4,8 @@
     "type": "project",
     "require": {
         "guzzlehttp/guzzle": "^6.2",
-        "curl/curl": "^1.6"
+        "curl/curl": "^1.6",
+        "mongodb/mongodb": "^1.1"
     },
     "license": "MIT",
     "authors": [
