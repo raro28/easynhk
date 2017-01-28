@@ -11,8 +11,8 @@ $dependencies = [
 $app = require_once '../../default.slim.app.php';
 
 $app->get('/news/', function(\Psr\Http\Message\RequestInterface $request, Psr\Http\Message\ResponseInterface $response, MongoDB\Client $mongo) {
-    $page = $request->getQueryParam('page', 1);
-    $pageSize = $request->getQueryParam('pageSize', 10);
+    $page = intval($request->getQueryParam('page', 1));
+    $pageSize = intval($request->getQueryParam('pageSize', 10));
     $skip = $pageSize * $page;
     $desiredProperties = ['_id' => 0, 'title' => 1, 'news_id' => 1];
 

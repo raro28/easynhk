@@ -4,9 +4,28 @@
         <title>NHK Easy News</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" crossorigin="anonymous">
     </head>
     <body>
-        
+        <div id="app-4">
+            <ol>
+                <li v-for="newsItem in newsList">{{ newsItem.news_id }} - {{ newsItem.title }}</li>
+            </ol>
+        </div>
         <script src="//unpkg.com/vue/dist/vue.js"></script>
+        <script src="//cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+        <script>
+var app4 = new Vue({
+    el: '#app-4',
+    data: {newsList: []}
+});
+Vue.http.get('/api/news/').then(response => {
+    app4.newsList.length = 0;
+    for (const item of response.body) {
+        app4.newsList.push(item);
+    }
+});
+        </script>
     </body>
 </html>
