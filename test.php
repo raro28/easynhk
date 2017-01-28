@@ -34,8 +34,20 @@ function fileDownload($url){
     unlink($tmpFile);
     
     return $base64;
-}    
-    
+}
+
+function extractArticle($url,$containerId){
+    $contents = (new \GuzzleHttp\Client())->request('GET', $url)->getBody()->getContents();
+    $doc = DOMDocument::loadHTML($contents);
+    $article = $doc->getElementById($containerId);
+    $list = $article->getElementsByTagName("rt");
+    while ($list->length > 0) {
+        $p = $list->item(0);
+        $p->parentNode->removeChild($p);
+    }
+    return preg_replace('/\s+/', "", $article->textContent);
+}
+
 $newsArray = \GuzzleHttp\json_decode($content)[0];
 foreach ($newsArray as $date=>$newsList){
     echo "$date\n";
@@ -46,6 +58,9 @@ foreach ($newsArray as $date=>$newsList){
                $newsItem->{$key} = fileDownload(call_user_func($urlExtractor,$newsItem,$baseEasy));
            }
        }
+       
+        $newsItem->easy_contents=extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html",'newsarticle');
+        echo print_r($newsItem);
        break;
     }
     break;
