@@ -3,7 +3,8 @@
     "description": "Easly parse Easy NHK News",
     "type": "project",
     "require": {
-        "guzzlehttp/guzzle": "^6.2"
+        "guzzlehttp/guzzle": "^6.2",
+        "curl/curl": "^1.6"
     },
     "license": "MIT",
     "authors": [
