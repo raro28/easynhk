@@ -69,19 +69,21 @@ foreach ($newsArray as $date=>$newsList){
     foreach($newsList as $newsItem){
        if($news->count(['news_id'=>$newsItem->news_id])>0){ continue;}
        
+       $newsItem->resources = new stdClass();
+       
        echo "$newsItem->title\n";
        foreach($resources as $key=>$urlExtractor){
            if($newsItem->{"has_$key"}){
-               $newsItem->{$key} = fileDownload(call_user_func($urlExtractor,$newsItem,$baseEasy));
+               $newsItem->resources->{$key} = fileDownload(call_user_func($urlExtractor,$newsItem,$baseEasy));
            }
        }
        
        if($newsItem->news_web_url != ''){
            $article = extractArticle($newsItem->news_web_url,'main');    
-           $newsItem->news_contents= $article?preg_replace('/\s+/', "", $article->ownerDocument->saveHTML($article)):"not found";
+           $newsItem->resources->news_html= $article?preg_replace('/\s+/', "", $article->ownerDocument->saveHTML($article)):"not found";
        }
        
-       $newsItem->easy_contents=preg_replace('/\s+/', "", extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html",'newsarticle')->textContent);
+       $newsItem->resources->news_easy_text=preg_replace('/\s+/', "", extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html",'newsarticle')->textContent);
        
        $news->insertOne((array)$newsItem);
     }
