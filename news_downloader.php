@@ -71,6 +71,8 @@ foreach ($newsArray as $date=>$newsList){
        
        $newsItem->resources = new stdClass();
        
+       $newsItem->title = preg_replace('/\s+/', "", $newsItem->title);
+       
        echo "$newsItem->title\n";
        foreach($resources as $key=>$urlExtractor){
            if($newsItem->{"has_$key"}){
@@ -80,10 +82,12 @@ foreach ($newsArray as $date=>$newsList){
        
        if($newsItem->news_web_url != ''){
            $article = extractArticle($newsItem->news_web_url,'main');    
-           $newsItem->resources->news_html= $article?preg_replace('/\s+/', "", $article->ownerDocument->saveHTML($article)):"not found";
+           $newsItem->resources->news_html= $article?preg_replace('/\s+/', " ", $article->ownerDocument->saveHTML($article)):"<p>not found</p>";
        }
        
-       $newsItem->resources->news_easy_text=preg_replace('/\s+/', "", extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html",'newsarticle')->textContent);
+       $article = extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html",'newsarticle');
+       $newsItem->resources->news_easy_text = $article?preg_replace('/\s+/', " ", $article->ownerDocument->saveHTML($article)):"<p>not found</p>";
+       $newsItem->resources->news_easy_text = preg_replace('/<ruby>(.*?)<\/ruby>/', '<span>$1</span>', $newsItem->resources->news_easy_text);
        
        $news->insertOne((array)$newsItem);
     }
