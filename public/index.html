@@ -24,29 +24,50 @@
             </nav> 
             <div class="card-group">
                 <div v-for="newsItem in newsList" class="card">
-                    <div class="card-block  text-center">
-                        <span class="card-title text-left">{{ newsItem.title }}</span>
+                    <small class="text-right">
+                        <span class="badge badge-default">
+                            <i class="fa fa-picture-o" aria-hidden="true" v-if="newsItem.has_news_web_image"></i>
+                            <i class="fa fa-file-video-o" aria-hidden="true" v-if="newsItem.has_news_web_movie"></i>
+                        </span>
+
+                        <span class="badge badge-primary">
+                            <i class="fa fa-picture-o" aria-hidden="true" v-if="newsItem.has_news_easy_image"></i>  
+                            <i class="fa fa-file-video-o" aria-hidden="true" v-if="newsItem.has_news_easy_movie"></i>
+                            <i class="fa fa-file-audio-o" aria-hidden="true" v-if="newsItem.has_news_easy_voice"></i>
+                        </span>
+                    </small>                    
+                    <div class="card-block  text-center">                        
+                        <span class="card-title text-left">{{ newsItem.title }}</span>                        
                     </div>
-                    <div class="card-footer">
+                    <div class="card-footer text-right align-baseline   ">
                         <a :href="'/news/'+newsItem.news_id" class="btn btn-link w-100"><span class='hidden-xs-down'>ニュースを読む</span> <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                     </div>
-                </div>   
+                </div>                
             </div>
+            <button class="btn btn-link" v-on:click="loadNextPage" >もっと</button>
         </div>
         <script src="//unpkg.com/vue/dist/vue.js"></script>
         <script src="//cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
         <script>
+Vue.http.options.root = '/api';
 var app4 = new Vue({
     el: '#app-4',
-    data: {newsList: []}
-});
-Vue.http.options.root = '/api';
-Vue.http.get('news/').then(response => {
-    app4.newsList.length = 0;
-    for (var item of response.body) {
-        app4.newsList.push(item);
+    data: {newsList: [], page: 1, pageSize: 10},
+    methods: {
+        loadNextPage: function () {
+            this.page++;
+            this.loadPage();
+        },
+        loadPage: function () {
+            Vue.http.get('news/?page=' + app4.page + "&pageSize=" + app4.pageSize).then(response => {
+                for (var item of response.body) {
+                    app4.newsList.push(item);
+                }
+            });
+        }
     }
 });
+app4.loadPage();
         </script>
     </body>
 </html>
