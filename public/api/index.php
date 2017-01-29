@@ -3,7 +3,6 @@
 require_once '../../bootstrap.php';
 $slimDefinitions = require_once '../../default.slim.config.php';
 
-
 $dependencies = [
     MongoDB\Client::class => DI\object(MongoDB\Client::class)->constructorParameter('uri', 'mongodb://localhost')
 ];
@@ -35,7 +34,7 @@ $app->get('/news/', function(\Psr\Http\Message\RequestInterface $request, Psr\Ht
 
     $response->getBody()->write(\GuzzleHttp\json_encode(iterator_to_array($mongo->newsdb->news->find([], ['skip' => $skip, 'limit' => $pageSize, 'projection' => $desiredProperties]))));
 
-    return $response->withHeader('Content-Type', 'application/json');
+    return $response->withHeader('Content-Type', 'application/json; charset=UTF-8');
 });
 
 $app->get('/news/{id}', function(\Psr\Http\Message\RequestInterface $request, Psr\Http\Message\ResponseInterface $response, MongoDB\Client $mongo, $id) {
@@ -48,7 +47,7 @@ $app->get('/news/{id}', function(\Psr\Http\Message\RequestInterface $request, Ps
 
     $response->getBody()->write(\GuzzleHttp\json_encode($result));
 
-    return $response->withHeader('Content-Type', 'application/json');
+    return $response->withHeader('Content-Type', 'application/json; charset=UTF-8');
 });
 
 $app->run();

@@ -6,16 +6,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" crossorigin="anonymous">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" crossorigin="anonymous">
     </head>
     <body>
         <div id="app-4" class="container">
+            <nav class="nav justify-content-end">
+                <a class="nav-link active" href="#">Home</a>
+                <a class="nav-link" href="#">About</a>
+            </nav> 
             <div class="card-group">
                 <div v-for="newsItem in newsList" class="card">
                     <div class="card-block">
-                        <h3 class="card-title">{{ newsItem.title }}</h3>
+                        <span class="card-title text-center">{{ newsItem.title }}</span>
                     </div>
                     <div class="card-footer">
-                        <a href="#" class="btn">{{ newsItem.news_id }}</a>
+                        <a :href="'/news/'+newsItem.news_id" class="btn btn-link w-100"><span class='hidden-xs-down'>ニュースを読む</span> <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                     </div>
                 </div>   
             </div>
