@@ -101,11 +101,11 @@ foreach ($newsArray as $date=>$newsList){
        
        if($newsItem->news_web_url != ''){
            $article = extractArticle($newsItem->news_web_url,'main');    
-           $newsItem->resources->news_html= $article?preg_replace('/\s+/', " ", $article->ownerDocument->saveHTML($article)):"<p>not found</p>";
+           $newsItem->resources->news_html= $article?preg_replace('/\s+/', " ", $article->ownerDocument->saveHTML($article)):"''";
        }
        
        $article = extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html",'newsarticle');
-       $newsItem->resources->news_easy_text = $article?preg_replace("@[ 　]@u","",preg_replace('/\s+/', " ", $article->ownerDocument->saveHTML($article))):"<p>not found</p>";
+       $newsItem->resources->news_easy_text = $article?preg_replace("@[ 　]@u","",preg_replace('/\s+/', " ", $article->ownerDocument->saveHTML($article))):"''";
        $newsItem->resources->news_easy_text = preg_replace("@[ 　]@u","",preg_replace('/<ruby>(.*?)<\/ruby>/', '<span>$1</span>', $newsItem->resources->news_easy_text));
        
        $news->insertOne((array)$newsItem);
