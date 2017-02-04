@@ -2,7 +2,7 @@
 
 require_once 'bootstrap.php';
 
-//error_reporting(E_ERROR);
+error_reporting(E_ERROR);
 
 $baseUrl = 'http://www3.nhk.or.jp';
 $baseEasy = "$baseUrl/news/easy";
@@ -25,7 +25,9 @@ $resources = [
     'news_easy_voice' => function(\stdClass $newsItem, $baseUrl) {
         return "$baseUrl/$newsItem->news_id/$newsItem->news_easy_voice_uri";
     }];
-    
+
+$times = ['news_prearranged', 'news_creation', 'news_preview', 'news_publication'];
+
 function cleanSpaces($string, $replacement = "") {
     return preg_replace("@[ 　]@u", $replacement, preg_replace('/\s+/', $replacement, $string));
 }
@@ -103,7 +105,7 @@ foreach ($newsArray as $date => $newsList) {
 
         $newsItem->resources = new stdClass();
 
-        $newsItem->title = cleanSpaces($newsItem->title);               
+        $newsItem->title = cleanSpaces($newsItem->title);
 
         echo "$newsItem->title\n";
         foreach ($resources as $key => $urlExtractor) {
@@ -121,6 +123,16 @@ foreach ($newsArray as $date => $newsList) {
         $article = extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html", 'newsarticle');
         $newsItem->resources->news_easy_text = $article ? cleanSpaces($article->ownerDocument->saveHTML($article), ' ') : "<p>not found</p>";
         $newsItem->resources->news_easy_text = cleanSpaces(replaceTag($newsItem->resources->news_easy_text, 'ruby', 'span'), ' ');
+
+        date_default_timezone_set('Asia/Tokyo');      
+        
+        foreach ($times as $time) {
+            $itemTime = str_replace(' ', "T", $newsItem->{$time."_time"});
+            $newsItem->{$time."_time"} = strtotime($itemTime);
+            if($newsItem->{$time."_time"}===FALSE){
+                die('bad date format');
+            }
+        }
 
         $news->insertOne((array) $newsItem);
     }
