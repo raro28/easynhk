@@ -25,6 +25,7 @@
             <div class="card-group">
                 <div v-for="newsItem in newsList" class="card">
                     <small class="text-right">
+                        <small :title="newsItem.news_prearranged_time" class>{{newsItem.news_prearranged_time.toDateString()}}</small>
                         <span class="badge badge-default">
                             <i class="fa fa-picture-o" aria-hidden="true" v-if="newsItem.has_news_web_image"></i>
                             <i class="fa fa-file-video-o" aria-hidden="true" v-if="newsItem.has_news_web_movie"></i>
@@ -61,6 +62,7 @@ var nhkNews = new Vue({
         loadPage: function () {
             this.$http.get('news/?page=' + this.page + "&pageSize=" + this.pageSize).then(response => {
                 for (var item of response.body) {
+                    item.news_prearranged_time = new Date(item.news_prearranged_time * 1000);
                     this.newsList.push(item);
                 }
             });
