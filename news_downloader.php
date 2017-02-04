@@ -90,7 +90,12 @@ function resampleAudio($audioContents) {
         diel('cant convert');
     }
 
-    return base64_encode(file_get_contents($outputFile));
+    $result = base64_encode(file_get_contents($outputFile));
+    
+    unlink($inputFile);
+    unlink($outputFile);
+    
+    return $result;
 }
 
 $news = (new MongoDB\Client('mongodb://localhost'))->newsdb->news;
