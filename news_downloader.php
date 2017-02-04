@@ -61,6 +61,24 @@ function extractArticle($url,$containerId,$removeTags=['rt','script']){
     }
 }
 
+function resampleAudio($audioContents){
+    $timeStamp = time();
+    $inputFile = "/dev/shm/in.$timeStamp.mp3";
+    $outputFile = "/dev/shm/out.$timeStamp.mp3";
+    
+    file_put_contents($inputFile, base64_decode($audioContents));
+    
+    $output = "";
+    $return_var = -1;
+    exec("lame -V5 --quiet --vbr-new --resample 44.1 $inputFile $outputFile", $output, $return_var);
+    
+    if(intval($output)!=0){
+        diel('cant convert');
+    }
+    
+    return base64_encode(file_get_contents($outputFile));
+}
+
  $news = (new MongoDB\Client('mongodb://localhost'))->newsdb->news;
 
 $newsArray = \GuzzleHttp\json_decode($content)[0];
@@ -76,7 +94,8 @@ foreach ($newsArray as $date=>$newsList){
        echo "$newsItem->title\n";
        foreach($resources as $key=>$urlExtractor){
            if($newsItem->{"has_$key"}){
-               $newsItem->resources->{$key} = fileDownload(call_user_func($urlExtractor,$newsItem,$baseEasy));
+               $contents = fileDownload(call_user_func($urlExtractor,$newsItem,$baseEasy));
+               $newsItem->resources->{$key} = $key=='news_easy_voice'?resampleAudio($contents):$contents;
            }
        }
        
