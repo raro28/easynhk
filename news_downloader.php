@@ -91,12 +91,14 @@ function resampleAudio($audioContents) {
     }
 
     $result = base64_encode(file_get_contents($outputFile));
-    
+
     unlink($inputFile);
     unlink($outputFile);
-    
+
     return $result;
 }
+
+date_default_timezone_set('Asia/Tokyo');
 
 $news = (new MongoDB\Client('mongodb://localhost'))->newsdb->news;
 
@@ -129,12 +131,10 @@ foreach ($newsArray as $date => $newsList) {
         $newsItem->resources->news_easy_text = $article ? cleanSpaces($article->ownerDocument->saveHTML($article), ' ') : "<p>not found</p>";
         $newsItem->resources->news_easy_text = cleanSpaces(replaceTag($newsItem->resources->news_easy_text, 'ruby', 'span'), ' ');
 
-        date_default_timezone_set('Asia/Tokyo');      
-        
         foreach ($times as $time) {
-            $itemTime = str_replace(' ', "T", $newsItem->{$time."_time"});
-            $newsItem->{$time."_time"} = strtotime($itemTime);
-            if($newsItem->{$time."_time"}===FALSE){
+            $itemTime = str_replace(' ', "T", $newsItem->{$time . "_time"});
+            $newsItem->{$time . "_time"} = strtotime($itemTime);
+            if ($newsItem->{$time . "_time"} === FALSE) {
                 die('bad date format');
             }
         }
