@@ -1,3 +1,4 @@
+db.news.updateMany({},{$unset:{title_with_ruby:"",news_priority_number:"",news_publication_status:"",news_file_ver:""}})
 [
   {
     "2017-01-27": [
