@@ -1,4 +1,4 @@
-db.news.updateMany({},{$unset:{title_with_ruby:"",news_priority_number:"",news_publication_status:"",news_file_ver:""}})
+db.news.updateMany({},{$unset:{title_with_ruby:"",news_priority_number:"",news_publication_status:"",news_file_ver:"",news_web_image_uri:"",news_web_movie_uri:"",news_easy_image_uri:"",news_easy_movie_uri:"",news_easy_voice_uri:"",news_display_flag:""}})
 [
   {
     "2017-01-27": [
