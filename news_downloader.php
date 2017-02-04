@@ -25,7 +25,7 @@ $resources = [
     'news_easy_voice' => function(\stdClass $newsItem, $baseUrl) {
         return "$baseUrl/$newsItem->news_id/$newsItem->news_easy_voice_uri";
     }];
-
+    
 function cleanSpaces($string, $replacement = "") {
     return preg_replace("@[ 　]@u", $replacement, preg_replace('/\s+/', $replacement, $string));
 }
@@ -103,7 +103,7 @@ foreach ($newsArray as $date => $newsList) {
 
         $newsItem->resources = new stdClass();
 
-        $newsItem->title = cleanSpaces($newsItem->title);
+        $newsItem->title = cleanSpaces($newsItem->title);               
 
         echo "$newsItem->title\n";
         foreach ($resources as $key => $urlExtractor) {
@@ -115,7 +115,7 @@ foreach ($newsArray as $date => $newsList) {
 
         if ($newsItem->news_web_url != '') {
             $article = extractArticle($newsItem->news_web_url, 'main');
-            $newsItem->resources->news_html = $article ? cleanSpaces($article->ownerDocument->saveHTML($article)) : "<p>not found</p>";
+            $newsItem->resources->news_html = $article ? cleanSpaces($article->ownerDocument->saveHTML($article), ' ') : "<p>not found</p>";
         }
 
         $article = extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html", 'newsarticle');
