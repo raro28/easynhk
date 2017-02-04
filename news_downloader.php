@@ -2,7 +2,7 @@
 
 require_once 'bootstrap.php';
 
-error_reporting(E_ERROR);
+//error_reporting(E_ERROR);
 
 $baseUrl = 'http://www3.nhk.or.jp';
 $baseEasy = "$baseUrl/news/easy";
@@ -25,6 +25,14 @@ $resources = [
     'news_easy_voice' => function(\stdClass $newsItem, $baseUrl) {
         return "$baseUrl/$newsItem->news_id/$newsItem->news_easy_voice_uri";
     }];
+
+function cleanSpaces($string, $replacement = "") {
+    return preg_replace("@[ 　]@u", $replacement, preg_replace('/\s+/', $replacement, $string));
+}
+
+function replaceTag($string, $tag, $replacement) {
+    return preg_replace("/<$tag>(.*?)<\/$tag>/", "<$replacement>$1</$replacement>", $string);
+}
 
 function fileDownload($url) {
     try {
@@ -95,7 +103,7 @@ foreach ($newsArray as $date => $newsList) {
 
         $newsItem->resources = new stdClass();
 
-        $newsItem->title = preg_replace("@[ 　]@u", "", preg_replace('/\s+/', "", $newsItem->title));
+        $newsItem->title = cleanSpaces($newsItem->title);
 
         echo "$newsItem->title\n";
         foreach ($resources as $key => $urlExtractor) {
@@ -107,12 +115,12 @@ foreach ($newsArray as $date => $newsList) {
 
         if ($newsItem->news_web_url != '') {
             $article = extractArticle($newsItem->news_web_url, 'main');
-            $newsItem->resources->news_html = $article ? preg_replace('/\s+/', " ", $article->ownerDocument->saveHTML($article)) : "''";
+            $newsItem->resources->news_html = $article ? cleanSpaces($article->ownerDocument->saveHTML($article)) : "''";
         }
 
         $article = extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html", 'newsarticle');
-        $newsItem->resources->news_easy_text = $article ? preg_replace("@[ 　]@u", "", preg_replace('/\s+/', " ", $article->ownerDocument->saveHTML($article))) : "''";
-        $newsItem->resources->news_easy_text = preg_replace("@[ 　]@u", "", preg_replace('/<ruby>(.*?)<\/ruby>/', '<span>$1</span>', $newsItem->resources->news_easy_text));
+        $newsItem->resources->news_easy_text = $article ? cleanSpaces($article->ownerDocument->saveHTML($article), ' ') : "''";
+        $newsItem->resources->news_easy_text = cleanSpaces(replaceTag($newsItem->resources->news_easy_text, 'ruby', 'span'), ' ');
 
         $news->insertOne((array) $newsItem);
     }
