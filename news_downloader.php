@@ -115,11 +115,11 @@ foreach ($newsArray as $date => $newsList) {
 
         if ($newsItem->news_web_url != '') {
             $article = extractArticle($newsItem->news_web_url, 'main');
-            $newsItem->resources->news_html = $article ? cleanSpaces($article->ownerDocument->saveHTML($article)) : "''";
+            $newsItem->resources->news_html = $article ? cleanSpaces($article->ownerDocument->saveHTML($article)) : "<p>not found</p>";
         }
 
         $article = extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html", 'newsarticle');
-        $newsItem->resources->news_easy_text = $article ? cleanSpaces($article->ownerDocument->saveHTML($article), ' ') : "''";
+        $newsItem->resources->news_easy_text = $article ? cleanSpaces($article->ownerDocument->saveHTML($article), ' ') : "<p>not found</p>";
         $newsItem->resources->news_easy_text = cleanSpaces(replaceTag($newsItem->resources->news_easy_text, 'ruby', 'span'), ' ');
 
         $news->insertOne((array) $newsItem);
