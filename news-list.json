@@ -1,4 +1,10 @@
 db.news.updateMany({},{$unset:{title_with_ruby:"",news_priority_number:"",news_publication_status:"",news_file_ver:"",news_web_image_uri:"",news_web_movie_uri:"",news_easy_image_uri:"",news_easy_movie_uri:"",news_easy_voice_uri:"",news_display_flag:""}})
+db.adminCommand({"setParameter": 1, "internalQueryExecMaxBlockingSortBytes" : 134217728})
+db.product.createIndex({"title": 1, "news_prearranged_time": 1, "news_creation_time": 1, "news_preview_time": 1, "news_publication_time":1});
+db.product.createIndex({"title": 1, "news_prearranged_time": 1});
+db.product.createIndex({"title": 1});
+db.product.createIndex({"news_prearranged_time": 1});
+
 [
   {
     "2017-01-27": [

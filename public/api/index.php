@@ -32,7 +32,9 @@ $app->get('/news/', function(\Psr\Http\Message\RequestInterface $request, Psr\Ht
         $desiredProperties['resources'] = 0;
     }
 
-    $response->getBody()->write(\GuzzleHttp\json_encode(iterator_to_array($mongo->newsdb->news->find([], ['skip' => $skip, 'limit' => $pageSize, 'projection' => $desiredProperties]))));
+    $options = ['skip' => $skip, 'limit' => $pageSize, 'projection' => $desiredProperties, 'sort' => ['news_prearranged_time' => -1]];
+    
+    $response->getBody()->write(\GuzzleHttp\json_encode(iterator_to_array($mongo->newsdb->news->find([], $options))));
 
     return $response->withHeader('Content-Type', 'application/json; charset=UTF-8');
 });
