@@ -127,7 +127,7 @@ foreach ($newsArray as $date => $newsList) {
             $newsItem->resources->news_html = $article ? cleanSpaces($article->ownerDocument->saveHTML($article), ' ') : "<p>not found</p>";
         }
 
-        $article = extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html", 'newsarticle');
+        $article = extractArticle("$baseEasy/$newsItem->news_id/$newsItem->news_id.html", 'js-article-body');
         $newsItem->resources->news_easy_text = $article ? cleanSpaces($article->ownerDocument->saveHTML($article), ' ') : "<p>not found</p>";
         $newsItem->resources->news_easy_text = cleanSpaces(replaceTag($newsItem->resources->news_easy_text, 'ruby', 'span'), ' ');
 
